@@ -9,6 +9,14 @@ def get_counter(name):
     return reuse_count
 
 
+def drop_db():
+    con = sqlite3.connect('translation_zh_en.db')
+    cur = con.cursor()
+    cur.execute('DROP TABLE IF EXISTS translation')
+    con.commit()
+    con.close()
+
+
 def to_translate(file, new_file):
     df = pd.read_excel(file, header=None)
     con = sqlite3.connect('translation_zh_en.db')
@@ -32,7 +40,7 @@ def to_translate(file, new_file):
             if type(df.iloc[row, col]) is str:
                 cell = df.iloc[row, col].replace('"', '`')
                 c = cur.execute(f'SELECT count(*) FROM translation WHERE zh = "{cell}"')
-                if c.fetchone()[0] < 1: # or ex == 1:
+                if c.fetchone()[0] < 1:  # or ex == 1:
                     tr_count += 2
                     cell_en = translator_zh_en.translate(cell)
                     cell_ru = translator_en_ru.translate(cell_en)
@@ -49,7 +57,6 @@ def to_translate(file, new_file):
                     df_ru.iloc[row, col] = s[1]
 
     con.close()
-
 
     with pd.ExcelWriter(new_file) as writer:
         df.to_excel(writer, sheet_name='zh', header=None, index=False)

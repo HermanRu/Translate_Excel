@@ -57,6 +57,8 @@ def main():
     Button(text="to Translate", command=translate_to_en_ru,
            width=12, height=2).grid(row=4, column=0)
     Button(text="Quit", command=root.destroy,
+           width=12, height=2).grid(row=4, column=2)
+    Button(text="Clear DB", command=drop_db,
            width=12, height=2).grid(row=4, column=1)
 
     root.mainloop()
