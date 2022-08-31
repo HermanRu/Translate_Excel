@@ -1,6 +1,9 @@
 import pandas as pd
 import sqlite3
 from translate import Translator
+from tqdm import tqdm
+
+global tr_count, reuse_count, progress_count
 
 
 def get_counter(name):
@@ -31,12 +34,14 @@ def to_translate(file, new_file):
 
     translator_zh_en = Translator(from_lang="zh", to_lang="en")
     translator_en_ru = Translator(from_lang="en", to_lang="ru")
-    global tr_count, reuse_count
-    tr_count, reuse_count = 0, 0
+    global tr_count, reuse_count, progress_count
+    tr_count, reuse_count, progress_count = 0, 0, 0
     df_en, df_ru = df.copy(), df.copy()
 
-    for row in range(df.shape[0]):
+    for row in tqdm(range(df.shape[0])):
         for col in range(df.shape[1]):
+            progress_count += 100.0 / (df.shape[0] * df.shape[1])
+            # print(progress_count)
             if type(df.iloc[row, col]) is str:
                 cell = df.iloc[row, col].replace('"', '`')
                 c = cur.execute(f'SELECT count(*) FROM translation WHERE zh = "{cell}"')
@@ -44,6 +49,8 @@ def to_translate(file, new_file):
                     tr_count += 2
                     cell_en = translator_zh_en.translate(cell)
                     cell_ru = translator_en_ru.translate(cell_en)
+                    if 'MYMEMORY WARNING' in cell_ru or cell_en:
+                        return print(f'{cell_en}\n{cell_ru}')
                     cur.execute("INSERT INTO translation (zh, en, ru) VALUES (?,?,?)",
                                 (cell, cell_en, cell_ru))
                     df_en.iloc[row, col] = cell_en
@@ -55,7 +62,6 @@ def to_translate(file, new_file):
                     s = cur.execute(f'SELECT en, ru  FROM translation WHERE zh = "{cell}"').fetchone()
                     df_en.iloc[row, col] = s[0]
                     df_ru.iloc[row, col] = s[1]
-
     con.close()
 
     with pd.ExcelWriter(new_file) as writer:
