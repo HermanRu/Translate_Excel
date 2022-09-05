@@ -49,7 +49,7 @@ def to_translate(file, new_file):
                     tr_count += 2
                     cell_en = translator_zh_en.translate(cell)
                     cell_ru = translator_en_ru.translate(cell_en)
-                    if 'MYMEMORY WARNING' in cell_ru or cell_en:
+                    if cell_ru.find('MYMEMORY WARNING') >= 0 or cell_en.find('MYMEMORY WARNING') >= 0:
                         return print(f'{cell_en}\n{cell_ru}')
                     cur.execute("INSERT INTO translation (zh, en, ru) VALUES (?,?,?)",
                                 (cell, cell_en, cell_ru))

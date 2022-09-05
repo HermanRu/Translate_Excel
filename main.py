@@ -67,11 +67,11 @@ def main():
     text = Text(width=36, height=4)
     text.grid(row=3, column=0, columnspan=3)
     Label(text=' ').grid(row=6, columnspan=3)
-    Button(text="to Translate", command=translate_to_en_ru,
+    Button(text="Translate", command=translate_to_en_ru,
            width=12, height=2).grid(row=7, column=0)
     Button(text="Quit", command=root.destroy,
            width=12, height=2).grid(row=7, column=2)
-    Button(text="Clear DB", command=drop_db,
+    Button(text="Clear DataBase", command=drop_db,
            width=12, height=2).grid(row=1, column=2)
     Label(text='Progress:').grid(row=8, column=1)
     ttk.Progressbar(orient='horizontal', mode='indeterminate',
