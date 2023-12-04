@@ -16,7 +16,7 @@ def main():
             initialdir=os.path.dirname(os.path.abspath('main.py')))
         global file, new_file
         file = os.path.abspath(file_name)
-        new_file = os.path.join(os.path.dirname(file_name),
+        new_file = os.path.join(os.path.abspath(os.path.dirname(file_name)),
                                 f'{os.path.splitext(os.path.abspath(file_name))[0]}_en_ru.xlsx')
         if not os.path.isfile(file_name):
             mb.showinfo("Open Excel file",
